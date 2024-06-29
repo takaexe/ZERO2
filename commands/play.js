@@ -108,7 +108,7 @@ module.exports = {
     description: "Adicione opções também",
     permissions: "0x0000000000000800",
     options: [{
-        name: 'musica',
+        name: 'name',
         description: 'Digite o nome/link da música ou playlist',
         type: ApplicationCommandOptionType.String,
         required: true
