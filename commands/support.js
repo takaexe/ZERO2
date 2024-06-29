@@ -9,7 +9,6 @@ module.exports = {
     try {
 
        const supportServerLink = "https://www.instagram.com/Taka.exe";
-       const instagramLink = "https://www.instagram.com/Taka.exe";
         const embed = new EmbedBuilder()
             .setColor('#b300ff')
             .setAuthor({
@@ -19,7 +18,7 @@ module.exports = {
           })
             .setDescription(`➡️ **Junte-se ao nosso servidor Discord para suporte e atualizações:**\n- ```diff
 Em Construção
-```- ${supportServerLink}\n\n➡️ **Me siga:**\n- Instagram - ${instagramLink}`)
+```- ${supportServerLink}\n\n➡️ **Me siga:**\n- Instagram - ${supportServerLink}`)
             .setImage('https://media.discordapp.net/attachments/1067224490225959032/1256707652013129888/2560x1440-cyberpunk-1gsxtwvkfayit9el.png?ex=6681bfb4&is=66806e34&hm=e92fa220ead6d9f77153da7de0b0c9d5f9d789adc0c31d168b679801558a829f&=&format=webp&quality=lossless')
             .setTimestamp();
 
