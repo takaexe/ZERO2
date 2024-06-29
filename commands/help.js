@@ -25,4 +25,4 @@ module.exports = {
   },
 };
 
-/* '**/support :** Exibir informações do servidor de suporte');
+/* '** /support :** Exibir informações do servidor de suporte'); */ 
