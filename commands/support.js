@@ -9,7 +9,7 @@ module.exports = {
     try {
 
        const supportServerLink = "https://www.instagram.com/Taka.exe";
-       const instagramink = "https://www.instagram.com/Taka.exe';
+       const instagramLink = "https://www.instagram.com/Taka.exe';
         const embed = new EmbedBuilder()
             .setColor('#b300ff')
             .setAuthor({
