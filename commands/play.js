@@ -52,7 +52,7 @@ async function play(client, interaction) {
             const errorEmbed = new EmbedBuilder()
                 .setColor('#ff0000')
                 .setTitle('Error')
-                .setDescription('There are no results found.');
+                .setDescription('Não foram encontrados resultados.');
 
             await interaction.editReply({ embeds: [errorEmbed] });
             return;
@@ -64,7 +64,7 @@ async function play(client, interaction) {
             new EmbedBuilder()
                 .setColor('#4d9fd6')
                 .setAuthor({
-                    name: 'Solicite atualização!',
+                    name: 'Solicitação completa!',
                     iconURL: 'https://cdn.discordapp.com/attachments/1230824451990622299/1236794583732457473/7828-verify-ak.gif',
                     url: 'https://instagram.com/taka.exe'
                 })
@@ -73,7 +73,7 @@ async function play(client, interaction) {
             new EmbedBuilder()
                 .setColor('#ffea00')
                 .setAuthor({
-                    name: 'Solicitar atualização!',
+                    name: 'Solicitação completa!',
                     iconURL: 'https://cdn.discordapp.com/attachments/1230824451990622299/1236802032938127470/4104-verify-yellow.gif',
                     url: 'https://instagram.com/taka.exe'
                 })
@@ -82,7 +82,7 @@ async function play(client, interaction) {
             new EmbedBuilder()
                 .setColor('#FF0000')
                 .setAuthor({
-                    name: 'Solicite atualização!',
+                    name: 'Solicitação completa!!',
                     iconURL: 'https://cdn.discordapp.com/attachments/1230824451990622299/1236802049190920202/4104-verify-red.gif',
                     url: 'https://instagram.com/taka.exe'
                 })
