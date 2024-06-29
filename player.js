@@ -108,7 +108,7 @@ function initializePlayer(client) {
                         url: 'https://instagram.com/taka.exe'
                     })
                     .setColor("#00FF00")
-                    .setTitle("**O loop de fila está ativado!**")
+                    .setTitle("**O loop das Musicas e/ou Fila está ativado!**")
 
 
                 await channel.send({ embeds: [loopEmbed] });
@@ -117,7 +117,7 @@ function initializePlayer(client) {
                 const skipEmbed = new EmbedBuilder()
                     .setColor('#3498db')
                     .setAuthor({
-                        name: 'Música pulada',
+                        name: 'Pulando música...',
                         iconURL: 'https://cdn.discordapp.com/attachments/1156866389819281418/1157269773118357604/giphy.gif?ex=6517fef6&is=6516ad76&hm=f106480f7d017a07f75d543cf545bbea01e9cf53ebd42020bd3b90a14004398e&',
                         url: 'https://instagram.com/taka.exe'
                     })
@@ -131,11 +131,11 @@ function initializePlayer(client) {
                 const loopEmbed = new EmbedBuilder()
                     .setColor("#0099ff")
                     .setAuthor({
-                        name: 'Loop desligado',
+                        name: 'Loop Desligado.',
                         iconURL: 'https://cdn.discordapp.com/attachments/1230824451990622299/1230836684774576168/7762-verified-blue.gif?ex=6638b97d&is=663767fd&hm=021725868cbbc66f35d2b980585489f93e9fd366aa57640732dc49e7da9a80ee&',
                         url: 'https://instagram.com/taka.exe'
                     })
-                    .setDescription('**Loop está desabilitado para fila e música única!**');
+                    .setDescription('**O loop para Músicas e/ou Playlist está desabilitado!**');
                     
 
                     await channel.send({ embeds: [loopEmbed] });
