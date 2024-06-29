@@ -15,8 +15,8 @@ module.exports = {
       .setTitle('💎 Satoru Music')
       .setDescription('Bem-vindo ao Bot de Música!\n\n- Aqui estão os comandos disponíveis:\n\n' +
         '**/play :** Comece a tocar as músicas.\n' +
-        '**/ping :** Verifique a latência do bot.\n' +
-        '**/support :** Exibir informações do servidor de suporte');
+        '**/ping :** Verifique a latência do bot.); 
+        
 
       return interaction.reply({ embeds: [embed] });
     } catch (e) {
@@ -24,3 +24,5 @@ module.exports = {
   }
   },
 };
+
+/* '**/support :** Exibir informações do servidor de suporte');
