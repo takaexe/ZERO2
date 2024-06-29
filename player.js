@@ -42,7 +42,7 @@ function initializePlayer(client) {
                 iconURL: 'https://cdn.discordapp.com/attachments/1230824451990622299/1236664581364125787/music-play.gif?ex=6638d524&is=663783a4&hm=5179f7d8fcd18edc1f7d0291bea486b1f9ce69f19df8a96303b75505e18baa3a&',
                 url: 'https://instagram.com/taka.exe'
             })
-            .setDescription(`➡️ **Nome da música:** [${track.info.title}](${track.info.uri})\n➡️ **Author:** ${track.info.author}\n➡️ **Plataformas :** YouTube, Spotify, SoundCloud`)
+            .setDescription(`➡️ **Nome da música:** [${track.info.title}](${track.info.uri})\n➡️ **Autor:** ${track.info.author}\n➡️ **Plataformas :** YouTube, Spotify, SoundCloud`)
             .setImage(`https://cdn.discordapp.com/attachments/1004341381784944703/1165201249331855380/RainbowLine.gif?ex=663939fa&is=6637e87a&hm=e02431de164b901e07b55d8f8898ca5b1b2832ad11985cecc3aa229a7598d610&`)
             .setThumbnail(track.info.thumbnail)
             .setTimestamp()
@@ -51,26 +51,26 @@ function initializePlayer(client) {
 
         const queueLoopButton = new ButtonBuilder()
             .setCustomId("loopQueue")
-            .setLabel("Loop Queue")
+            .setLabel("Ligar loop!")
             .setStyle(ButtonStyle.Primary);
 
         const disableLoopButton = new ButtonBuilder()
             .setCustomId("disableLoop")
-            .setLabel("Disable Loop")
+            .setLabel("Desativar loop.")
             .setStyle(ButtonStyle.Primary);
 
         const skipButton = new ButtonBuilder()
             .setCustomId("skipTrack")
-            .setLabel("Skip")
+            .setLabel("Pular")
             .setStyle(ButtonStyle.Success);
 
         const showQueueButton = new ButtonBuilder()
             .setCustomId("showQueue")
-            .setLabel("Show Queue")
+            .setLabel("Playlist")
             .setStyle(ButtonStyle.Primary);
         const clearQueueButton = new ButtonBuilder()
             .setCustomId("clearQueue")
-            .setLabel("Clear Queue")
+            .setLabel("Limpar a playlist")
             .setStyle(ButtonStyle.Danger);
 
 
