@@ -196,7 +196,7 @@ function initializePlayer(client) {
                 player.destroy();
                 const queueEmbed = new EmbedBuilder()
                     .setColor("#0099ff")
-                    .setDescription('**A fila de músicas terminou! Desconectando bot!**');
+                    .setDescription('**Acabou as músicas! Desconectando o bot...**');
     
     
                 await channel.send({ embeds: [queueEmbed] });
