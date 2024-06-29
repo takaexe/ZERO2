@@ -19,7 +19,7 @@ console.log('\x1b[36m%s\x1b[0m', '|    ❌ Falha ao carregar comandos!');
 }
 })();
 
-console.log('\x1b[32m%s\x1b[0m', `|    🌼 logado como ${client.user.username}`);
+console.log('\x1b[32m%s\x1b[0m', `|    🌼 Logado como ${client.user.username}`);
 
 const serverCount = client.guilds.cache.size;
 setInterval(() => client.user.setActivity({ 
