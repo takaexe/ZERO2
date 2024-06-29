@@ -103,7 +103,7 @@ function initializePlayer(client) {
                 setLoop(player, 'queue');
                 const loopEmbed = new EmbedBuilder()
                     .setAuthor({
-                        name: 'Loop de fila!',
+                        name: 'Loop de musicas!',
                         iconURL: 'https://cdn.discordapp.com/attachments/1156866389819281418/1157318080670728283/7905-repeat.gif?ex=66383bb4&is=6636ea34&hm=65f37cf88245f1c09285b547fda57b82828b3bbcda855e184f446d6ff43756b3&',
                         url: 'https://instagram.com/taka.exe'
                     })
@@ -117,7 +117,7 @@ function initializePlayer(client) {
                 const skipEmbed = new EmbedBuilder()
                     .setColor('#3498db')
                     .setAuthor({
-                        name: 'Música ignorada',
+                        name: 'Música pulada',
                         iconURL: 'https://cdn.discordapp.com/attachments/1156866389819281418/1157269773118357604/giphy.gif?ex=6517fef6&is=6516ad76&hm=f106480f7d017a07f75d543cf545bbea01e9cf53ebd42020bd3b90a14004398e&',
                         url: 'https://instagram.com/taka.exe'
                     })
