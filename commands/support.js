@@ -8,7 +8,7 @@ module.exports = {
   run: async (client, interaction) => {
     try {
 
-      const supportServerLink = "Em construção!;
+      const supportServerLink = "Em construção!';
       const instagramink = "https://www.instagram.com/Taka.exe';
         const embed = new EmbedBuilder()
             .setColor('#b300ff')
