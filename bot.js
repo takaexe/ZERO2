@@ -52,7 +52,17 @@ client.on('messageCreate', message => {
     }
 });
 
-// Inicia o servidor express (opcional)
+client.on('raw', (packet) => {
+    if (!['VOICE_STATE_UPDATE', 'VOICE_SERVER_UPDATE'].includes(packet.t)) return;
+    client.riffy.updateVoiceState(packet);
+});
+
+// Login do bot
+client.login(config.token).catch((e) => {
+    console.log('TOKEN ERROR❌  - Ative intenções ou redefina novo token');
+});
+
+// Servidor Express (opcional)
 const express = require('express');
 const app = express();
 const port = 3000;
@@ -62,9 +72,4 @@ app.get('/', (req, res) => {
 });
 app.listen(port, () => {
     console.log(`🔗 Listening to Taka.exe : http://localhost:${port}`);
-});
-
-// Login do bot
-client.login(config.TOKEN || process.env.TOKEN).catch((e) => {
-    console.log('TOKEN ERROR❌  - Ative intenções ou redefina novo token');
 });
