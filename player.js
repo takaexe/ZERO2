@@ -99,7 +99,7 @@ function initializePlayer(client) {
                         .setColor("#00FF00")
                         .setAuthor({
                             name: 'Música reproduzida',
-                            iconURL: 'https://cdn.discordapp.com/attachments/1156866389819281418/1157295079874016777/10449-music-note.png'
+                            iconURL: 'https://cdn.discordapp.com/attachments/1230824451990622299/1236664581364125787/music-play.gif'
                         })
                         .setTitle("**A música está sendo reproduzida!**");
 
