@@ -49,12 +49,12 @@ function initializePlayer(client) {
 
         const queueLoopButton = new ButtonBuilder()
             .setCustomId("loopQueue")
-            .setLabel("Repetir Fila")
+            .setLabel("Ativar repetição")
             .setStyle(ButtonStyle.Primary);
 
         const disableLoopButton = new ButtonBuilder()
             .setCustomId("disableLoop")
-            .setLabel("Desativar Repetição")
+            .setLabel("Desativar repetição")
             .setStyle(ButtonStyle.Primary);
 
         const skipButton = new ButtonBuilder()
@@ -64,12 +64,12 @@ function initializePlayer(client) {
 
         const showQueueButton = new ButtonBuilder()
             .setCustomId("showQueue")
-            .setLabel("Mostrar Fila")
+            .setLabel("Mostrar lista de reprodução")
             .setStyle(ButtonStyle.Primary);
 
         const clearQueueButton = new ButtonBuilder()
             .setCustomId("clearQueue")
-            .setLabel("Limpar Fila")
+            .setLabel("Limpar lista de reprodução")
             .setStyle(ButtonStyle.Danger);
 
         const actionRow = new ActionRowBuilder()
@@ -101,11 +101,11 @@ function initializePlayer(client) {
                 setLoop(player, 'queue');
                 const loopEmbed = new EmbedBuilder()
                     .setAuthor({
-                        name: 'Repetir Fila Ativado!',
+                        name: 'Repetição de musica/lista de reprodução ativada!',
                         iconURL: 'https://cdn.discordapp.com/attachments/1156866389819281418/1157318080670728283/7905-repeat.gif?ex=66383bb4&is=6636ea34&hm=65f37cf88245f1c09285b547fda57b82828b3bbcda855e184f446d6ff43756b3&'
                     })
                     .setColor("#00FF00")
-                    .setTitle("**A repetição da fila está ativada!**");
+                    .setTitle("**A repetição da música/lista de reprodução está ativada!**");
 
                 await channel.send({ embeds: [loopEmbed] });
 
@@ -114,7 +114,7 @@ function initializePlayer(client) {
                 const skipEmbed = new EmbedBuilder()
                     .setColor('#3498db')
                     .setAuthor({
-                        name: 'Música Pulada',
+                        name: 'Música pulada...',
                         iconURL: 'https://cdn.discordapp.com/attachments/1156866389819281418/1157269773118357604/giphy.gif?ex=6517fef6&is=6516ad76&hm=f106480f7d017a07f75d543cf545bbea01e9cf53ebd42020bd3b90a14004398e&'
                     })
                     .setTitle("**O bot vai tocar a próxima música!**")
@@ -127,10 +127,10 @@ function initializePlayer(client) {
                 const loopEmbed = new EmbedBuilder()
                     .setColor("#0099ff")
                     .setAuthor({
-                        name: 'Repetição Desativada',
+                        name: 'Repetição dsativada',
                         iconURL: 'https://cdn.discordapp.com/attachments/1230824451990622299/1230836684774576168/7762-verified-blue.gif?ex=6638b97d&is=663767fd&hm=021725868cbbc66f35d2b980585489f93e9fd366aa57640732dc49e7da9a80ee&'
                     })
-                    .setDescription('**A repetição da fila e de músicas individuais está desativada!**');
+                    .setDescription('**A repetição da músicas/lista de reprodução está desativada!**');
 
                 await channel.send({ embeds: [loopEmbed] });
 
@@ -142,10 +142,10 @@ function initializePlayer(client) {
                 const queueEmbed = new EmbedBuilder()
                     .setColor("#0099ff")
                     .setAuthor({
-                        name: 'Fila Limpa',
+                        name: 'Lista de reprodução está Limpa',
                         iconURL: 'https://cdn.discordapp.com/attachments/1230824451990622299/1230836684774576168/7762-verified-blue.gif?ex=6638b97d&is=663767fd&hm=021725868cbbc66f35d2b980585489f93e9fd366aa57640732dc49e7da9a80ee&'
                     })
-                    .setDescription('**A fila de músicas foi limpa com sucesso!**');
+                    .setDescription('**A lista de reprodução foi limpa com sucesso!**');
 
                 await channel.send({ embeds: [queueEmbed] });
             }
@@ -189,7 +189,7 @@ function initializePlayer(client) {
         const queueList = queue.map((track, index) => `${index + 1}. ${track}`).join('\n');
         const queueEmbed = new EmbedBuilder()
             .setColor("#0099ff")
-            .setTitle("Fila Atual")
+            .setTitle("Lista de reprodução atual")
             .setDescription(queueList);
 
         channel.send({ embeds: [queueEmbed] });
