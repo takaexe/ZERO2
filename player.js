@@ -159,7 +159,7 @@ function initializePlayer(client) {
     
                         const queueEmbed = new EmbedBuilder()
                             .setColor("#0099ff")
-                            .setTitle(`Current Queue (Page ${i + 1}/${pages.length})`)
+                            .setTitle(`Fila atual (Page ${i + 1}/${pages.length})`)
                             .setDescription(numberedSongs);
     
                         await channel.send({ embeds: [queueEmbed] });
