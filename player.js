@@ -168,6 +168,6 @@ function initializePlayer(client) {
             await channel.send({ embeds: [queueEmbed] });
         }
     });
-
-    module.exports = { initializePlayer };
 }
+
+module.exports = { initializePlayer };
