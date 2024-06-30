@@ -1,5 +1,5 @@
 const { Riffy } = require("riffy");
-const { MessageEmbed, MessageActionRow, MessageButton } = require("discord.js");
+const { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle } = require("discord.js");
 const { queueNames } = require("./commands/play");
 
 function initializePlayer(client) {
@@ -35,125 +35,201 @@ function initializePlayer(client) {
     client.riffy.on("trackStart", async (player, track) => {
         const channel = client.channels.cache.get(player.textChannel);
 
-        const embed = new MessageEmbed()
+        const embed = new EmbedBuilder()
             .setColor("#0099ff")
             .setAuthor({
                 name: 'Está tocando.',
-                iconURL: 'https://cdn.discordapp.com/attachments/1230824451990622299/1236664581364125787/music-play.gif',
+                iconURL: 'https://cdn.discordapp.com/attachments/1230824451990622299/1236664581364125787/music-play.gif?ex=6638d524&is=663783a4&hm=5179f7d8fcd18edc1f7d0291bea486b1f9ce69f19df8a96303b75505e18baa3a&',
                 url: 'https://instagram.com/taka.exe'
             })
-            .setDescription(`**[${track.info.title}](${track.info.uri})**\nby ${track.info.author}`)
+            .setDescription(`➡️ **Nome da música:** [${track.info.title}](${track.info.uri})\n➡️ **Autor:** ${track.info.author}\n➡️ **Plataformas :** YouTube, Spotify, SoundCloud`)
+            .setImage(`https://cdn.discordapp.com/attachments/1004341381784944703/1165201249331855380/RainbowLine.gif?ex=663939fa&is=6637e87a&hm=e02431de164b901e07b55d8f8898ca5b1b2832ad11985cecc3aa229a7598d610&`)
             .setThumbnail(track.info.thumbnail)
-            .setImage('https://cdn.discordapp.com/attachments/1004341381784944703/1165201249331855380/RainbowLine.gif')
-            .setFooter('Clique nos botões abaixo para controlar a reprodução!')
-            .setTimestamp();
+            .setTimestamp()
+            .setFooter({ text: 'Clique nos botões abaixo para controlar a reprodução!' });
 
-        const row = new MessageActionRow()
-            .addComponents(
-                new MessageButton()
-                    .setCustomId('loopQueue')
-                    .setLabel('Ligar repetição! 🔁')
-                    .setStyle('PRIMARY'),
-                new MessageButton()
-                    .setCustomId('disableLoop')
-                    .setLabel('Desligar repetição!')
-                    .setStyle('PRIMARY'),
-                new MessageButton()
-                    .setCustomId('pauseTrack')
-                    .setLabel('Pausar ⏸️')
-                    .setStyle('PRIMARY'),
-                new MessageButton()
-                    .setCustomId('skipTrack')
-                    .setLabel('Pular ⏭️')
-                    .setStyle('SUCCESS'),
-                new MessageButton()
-                    .setCustomId('showQueue')
-                    .setLabel('Playlist ⏏️')
-                    .setStyle('PRIMARY'),
-                new MessageButton()
-                    .setCustomId('clearQueue')
-                    .setLabel('Limpar a playlist 🗑️')
-                    .setStyle('DANGER'),
-            );
 
-        const message = await channel.send({ embeds: [embed], components: [row] });
+        const queueLoopButton = new ButtonBuilder()
+            .setCustomId("loopQueue")
+            .setLabel("Ligar repetição!🔁")
+            .setStyle(ButtonStyle.Primary);
 
-        const filter = i => ['loopQueue', 'disableLoop', 'pauseTrack', 'skipTrack', 'showQueue', 'clearQueue'].includes(i.customId);
+        const disableLoopButton = new ButtonBuilder()
+            .setCustomId("disableLoop")
+            .setLabel("Desligar repetição! ")
+            .setStyle(ButtonStyle.Primary);
+
+        const skipButton = new ButtonBuilder()
+            .setCustomId("skipTrack")
+            .setLabel("Pular ⏭️")
+            .setStyle(ButtonStyle.Success);
+
+        const showQueueButton = new ButtonBuilder()
+            .setCustomId("showQueue")
+            .setLabel("Playlist ⏏")
+            .setStyle(ButtonStyle.Primary);
+        const clearQueueButton = new ButtonBuilder()
+            .setCustomId("clearQueue")
+            .setLabel("Limpar a playlist 🗑️")
+            .setStyle(ButtonStyle.Danger);
+
+
+        const actionRow = new ActionRowBuilder()
+            .addComponents(queueLoopButton, disableLoopButton, showQueueButton, clearQueueButton, skipButton);
+
+
+        const message = await channel.send({ embeds: [embed], components: [actionRow] });
+
+
+        const filter = i => i.customId === 'loopQueue' || i.customId === 'skipTrack' || i.customId === 'disableLoop' || i.customId === 'showQueue' || i.customId === 'clearQueue';
         const collector = message.createMessageComponentCollector({ filter, time: 180000 });
-
         setTimeout(() => {
-            row.components.forEach(component => component.setDisabled(true));
-            message.edit({ components: [row] }).catch(console.error);
-        }, 180000);
+            const disabledRow = new ActionRowBuilder()
+                .addComponents(
+                    queueLoopButton.setDisabled(true),
+                    disableLoopButton.setDisabled(true),
+                    skipButton.setDisabled(true),
+                    showQueueButton.setDisabled(true),
+                    clearQueueButton.setDisabled(true)
+                );
 
+
+            message.edit({ components: [disabledRow] })
+                .catch(console.error);
+        }, 180000);
         collector.on('collect', async i => {
             await i.deferUpdate();
+            if (i.customId === 'loopQueue') {
+                setLoop(player, 'queue');
+                const loopEmbed = new EmbedBuilder()
+                    .setAuthor({
+                        name: 'Repetição ligada!',
+                        iconURL: 'https://cdn.discordapp.com/attachments/1156866389819281418/1157318080670728283/7905-repeat.gif?ex=66383bb4&is=6636ea34&hm=65f37cf88245f1c09285b547fda57b82828b3bbcda855e184f446d6ff43756b3&',
+                        url: 'https://instagram.com/taka.exe'
+                    })
+                    .setColor("#00FF00")
+                    .setTitle("**A repetição das músicas está ativada!**")
 
-            switch (i.customId) {
-                case 'loopQueue':
-                    setLoop(player, 'queue');
-                    await channel.send({ content: '**A repetição das músicas está ativada!**' });
-                    break;
-                case 'pauseTrack':
-                    player.pause(true);
-                    await channel.send({ content: '**A música foi pausada!**' });
-                    break;
-                case 'skipTrack':
-                    player.stop();
-                    await channel.send({ content: '**Pulando para a próxima música!**' });
-                    break;
-                case 'disableLoop':
-                    setLoop(player, 'none');
-                    await channel.send({ content: '**A repetição de músicas está desativada!**' });
-                    break;
-                case 'showQueue':
-                    showQueue(channel, queueNames);
-                    break;
-                case 'clearQueue':
+
+                await channel.send({ embeds: [loopEmbed] });
+            } else if (i.customId === 'skipTrack') {
+                player.stop();
+                const skipEmbed = new EmbedBuilder()
+                    .setColor('#3498db')
+                    .setAuthor({
+                        name: 'Pulando música...',
+                        iconURL: 'https://cdn.discordapp.com/attachments/1156866389819281418/1157269773118357604/giphy.gif?ex=6517fef6&is=6516ad76&hm=f106480f7d017a07f75d543cf545bbea01e9cf53ebd42020bd3b90a14004398e&',
+                        url: 'https://instagram.com/taka.exe'
+                    })
+                    .setTitle("**Vou tocar a próxima música!**")
+                    .setTimestamp();
+
+
+                await channel.send({ embeds: [skipEmbed] });
+            } else if (i.customId === 'disableLoop') {
+                setLoop(player, 'none');
+                const loopEmbed = new EmbedBuilder()
+                    .setColor("#0099ff")
+                    .setAuthor({
+                        name: 'Repetição desativada.',
+                        iconURL: 'https://cdn.discordapp.com/attachments/1230824451990622299/1230836684774576168/7762-verified-blue.gif?ex=6638b97d&is=663767fd&hm=021725868cbbc66f35d2b980585489f93e9fd366aa57640732dc49e7da9a80ee&',
+                        url: 'https://instagram.com/taka.exe'
+                    })
+                    .setDescription('**A repetição de músicas está desativada!**');
+                    
+
+                    await channel.send({ embeds: [loopEmbed] });
+                } else if (i.customId === 'showQueue') {
+    
+                    const pageSize = 30;
+    
+                    const queueMessage = queueNames.length > 0 ?
+                        queueNames.map((song, index) => `${index + 1}. ${song}`).join('\n') :
+                        "Playlist está vazia.";
+    
+    
+                    const pages = [];
+                    for (let i = 0; i < queueNames.length; i += pageSize) {
+                        const page = queueNames.slice(i, i + pageSize);
+                        pages.push(page);
+                    }
+    
+                    for (let i = 0; i < pages.length; i++) {
+                        const numberedSongs = pages[i].map((song, index) => `${index + 1}. ${song}`).join('\n');
+    
+                        const queueEmbed = new EmbedBuilder()
+                            .setColor("#0099ff")
+                            .setTitle(`Playlist atual (Page ${i + 1}/${pages.length})`)
+                            .setDescription(numberedSongs);
+    
+                        await channel.send({ embeds: [queueEmbed] });
+                    }
+    
+                } else if (i.customId === 'clearQueue') {
                     clearQueue(player);
-                    await channel.send({ content: '**Playlist de músicas limpa com sucesso!**' });
-                    break;
+                    const queueEmbed = new EmbedBuilder()
+                        .setColor("#0099ff")
+                        .setAuthor({
+                            name: 'Playlist limpa',
+                            iconURL: 'https://cdn.discordapp.com/attachments/1230824451990622299/1230836684774576168/7762-verified-blue.gif?ex=6638b97d&is=663767fd&hm=021725868cbbc66f35d2b980585489f93e9fd366aa57640732dc49e7da9a80ee&',
+                            url: 'https://instagram.com/taka.exe'
+                        })
+                        .setDescription('**Playlist de músicas limpa com sucesso!**');
+    
+    
+                    await channel.send({ embeds: [queueEmbed] });
+                }
+            });
+    
+            collector.on('end', collected => {
+                console.log(`Collected ${collected.size} interactions.`);
+            });
+        });
+    
+        client.riffy.on("queueEnd", async (player) => {
+            const channel = client.channels.cache.get(player.textChannel);
+            const autoplay = false;
+    
+            if (autoplay) {
+                player.autoplay(player);
+            } else {
+                player.destroy();
+                const queueEmbed = new EmbedBuilder()
+                    .setColor("#0099ff")
+                    .setDescription('**Acabou as músicas! Desconectando o bot...**');
+    
+    
+                await channel.send({ embeds: [queueEmbed] });
             }
         });
-
-        collector.on('end', collected => {
-            console.log(`Collected ${collected.size} interactions.`);
-        });
-    });
-
-    client.riffy.on("queueEnd", async (player) => {
-        const channel = client.channels.cache.get(player.textChannel);
-        const autoplay = false;
-
-        if (autoplay) {
-            player.autoplay(player);
-        } else {
-            player.destroy();
-            const embed = new MessageEmbed()
-                .setColor("#0099ff")
-                .setDescription('**Acabou as músicas! Desconectando o bot...**');
-
-            await channel.send({ embeds: [embed] });
+    
+    
+        function setLoop(player, loopType) {
+            if (loopType === "queue") {
+                player.setLoop("queue");
+            } else {
+                player.setLoop("none");
+            }
         }
-    });
-
-    function setLoop(player, loopType) {
-        player.setLoop(loopType === 'queue' ? 'queue' : 'none');
+    
+    
+        function clearQueue(player) {
+            player.queue.clear();
+            queueNames.length = 0;
+        }
+    
+    
+        function showQueue(channel, queue) {
+            const queueList = queue.map((track, index) => `${index + 1}. ${track.info.title}`).join('\n');
+            const queueEmbed = new EmbedBuilder()
+                .setColor("#0099ff")
+                .setTitle("Queue")
+                .setDescription(queueList);
+            channel.send({ embeds: [queueEmbed] });
+        }
+    
+        module.exports = { initializePlayer, setLoop, clearQueue, showQueue };
     }
-
-    function clearQueue(player) {
-        player.queue.clear();
-        queueNames.length = 0;
-    }
-
-    function showQueue(channel, queue) {
-        const embed = new MessageEmbed()
-            .setColor("#0099ff")
-            .setTitle("Playlist atual")
-            .setDescription(queue.map((song, index) => `${index + 1}. ${song}`).join('\n'));
-
-        channel.send({ embeds: [embed] });
-    }
-}
-
-module.exports = { initializePlayer };
+    
+    module.exports = { initializePlayer };
+    
