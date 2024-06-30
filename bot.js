@@ -18,29 +18,21 @@ client.once('ready', () => {
     printWatermark();
 });
 
-// Carrega os eventos
-fs.readdir('./events', (err, files) => {
-    if (err) return console.error('Erro ao carregar eventos:', err);
-    files.forEach((file) => {
-        if (!file.endsWith('.js')) return;
-        const event = require(`./events/${file}`);
-        let eventName = file.split('.')[0];
-        client.on(eventName, event.bind(null, client));
-        delete require.cache[require.resolve(`./events/${file}`)];
-    });
-});
+// Carregar eventos
+const eventFiles = fs.readdirSync('./events').filter(file => file.endsWith('.js'));
+for (const file of eventFiles) {
+    const event = require(`./events/${file}`);
+    const eventName = file.split('.')[0];
+    client.on(eventName, event.bind(null, client));
+}
 
-// Carrega os comandos
+// Carregar comandos
 client.commands = new Map();
-const commandsDir = './commands';
-fs.readdir(commandsDir, (err, files) => {
-    if (err) return console.error('Erro ao carregar comandos:', err);
-    files.forEach(file => {
-        if (!file.endsWith('.js')) return;
-        const command = require(`${commandsDir}/${file}`);
-        client.commands.set(command.name, command);
-    });
-});
+const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
+for (const file of commandFiles) {
+    const command = require(`./commands/${file}`);
+    client.commands.set(command.name, command);
+}
 
 client.on('messageCreate', message => {
     if (!message.content.startsWith(config.prefix) || message.author.bot) return;
@@ -58,11 +50,6 @@ client.on('messageCreate', message => {
         console.error(error);
         message.reply('Houve um erro ao executar o comando.');
     }
-});
-
-client.on('raw', (packet) => {
-    if (!['VOICE_STATE_UPDATE', 'VOICE_SERVER_UPDATE'].includes(packet.t)) return;
-    client.riffy.updateVoiceState(packet);
 });
 
 // Inicia o servidor express (opcional)
