@@ -103,12 +103,12 @@ function initializePlayer(client) {
                 setLoop(player, 'queue');
                 const loopEmbed = new EmbedBuilder()
                     .setAuthor({
-                        name: 'Ligar loop!',
+                        name: 'Repetição ligada!',
                         iconURL: 'https://cdn.discordapp.com/attachments/1156866389819281418/1157318080670728283/7905-repeat.gif?ex=66383bb4&is=6636ea34&hm=65f37cf88245f1c09285b547fda57b82828b3bbcda855e184f446d6ff43756b3&',
                         url: 'https://instagram.com/taka.exe'
                     })
                     .setColor("#00FF00")
-                    .setTitle("**O loop das Musicas e/ou Fila está ativado!**")
+                    .setTitle("**A repetição das músicas está ativada!**")
 
 
                 await channel.send({ embeds: [loopEmbed] });
@@ -131,11 +131,11 @@ function initializePlayer(client) {
                 const loopEmbed = new EmbedBuilder()
                     .setColor("#0099ff")
                     .setAuthor({
-                        name: 'Desativar loop.',
+                        name: 'Repetição desativada.',
                         iconURL: 'https://cdn.discordapp.com/attachments/1230824451990622299/1230836684774576168/7762-verified-blue.gif?ex=6638b97d&is=663767fd&hm=021725868cbbc66f35d2b980585489f93e9fd366aa57640732dc49e7da9a80ee&',
                         url: 'https://instagram.com/taka.exe'
                     })
-                    .setDescription('**O loop de músicas ou playlist está desativado!**');
+                    .setDescription('**A repetição de músicas está desativada!**');
                     
 
                     await channel.send({ embeds: [loopEmbed] });
