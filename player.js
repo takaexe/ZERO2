@@ -62,6 +62,16 @@ function initializePlayer(client) {
             .setLabel("Pular")
             .setStyle(ButtonStyle.Success);
 
+        const pauseButton = new ButtonBuilder()
+            .setCustomId("pauseTrack")
+            .setLabel("Pausar")
+            .setStyle(ButtonStyle.Primary);
+
+        const playButton = new ButtonBuilder()
+            .setCustomId("playTrack")
+            .setLabel("Reproduzir")
+            .setStyle(ButtonStyle.Primary);
+
         const showQueueButton = new ButtonBuilder()
             .setCustomId("showQueue")
             .setLabel("Mostrar lista de reprodução")
@@ -73,11 +83,11 @@ function initializePlayer(client) {
             .setStyle(ButtonStyle.Danger);
 
         const actionRow = new ActionRowBuilder()
-            .addComponents(queueLoopButton, disableLoopButton, showQueueButton, clearQueueButton, skipButton);
+            .addComponents(queueLoopButton, disableLoopButton, showQueueButton, clearQueueButton, skipButton, pauseButton, playButton);
 
         const message = await channel.send({ embeds: [embed], components: [actionRow] });
 
-        const filter = i => i.customId === 'loopQueue' || i.customId === 'skipTrack' || i.customId === 'disableLoop' || i.customId === 'showQueue' || i.customId === 'clearQueue';
+        const filter = i => ['loopQueue', 'skipTrack', 'disableLoop', 'showQueue', 'clearQueue', 'pauseTrack', 'playTrack'].includes(i.customId);
         const collector = message.createMessageComponentCollector({ filter, time: 180000 });
 
         setTimeout(() => {
@@ -87,7 +97,9 @@ function initializePlayer(client) {
                     disableLoopButton.setDisabled(true),
                     skipButton.setDisabled(true),
                     showQueueButton.setDisabled(true),
-                    clearQueueButton.setDisabled(true)
+                    clearQueueButton.setDisabled(true),
+                    pauseButton.setDisabled(true),
+                    playButton.setDisabled(true)
                 );
 
             message.edit({ components: [disabledRow] })
@@ -148,6 +160,30 @@ function initializePlayer(client) {
                     .setDescription('**A lista de reprodução foi limpa com sucesso!**');
 
                 await channel.send({ embeds: [queueEmbed] });
+
+            } else if (i.customId === 'pauseTrack') {
+                player.pause(true);
+                const pauseEmbed = new EmbedBuilder()
+                    .setColor("#FFA500")
+                    .setAuthor({
+                        name: 'Música pausada',
+                        iconURL: 'https://cdn.discordapp.com/attachments/1156866389819281418/1157279084950176774/10173-stop.png?ex=66396c1f&is=6637c2ff&hm=2ab6b13e08aae86ef9c8899c08f3c5feadbd4df437ae579e163c6bce0b318aa3&'
+                    })
+                    .setDescription('**A música está pausada!**');
+
+                await channel.send({ embeds: [pauseEmbed] });
+
+            } else if (i.customId === 'playTrack') {
+                player.pause(false);
+                const playEmbed = new EmbedBuilder()
+                    .setColor("#00FF00")
+                    .setAuthor({
+                        name: 'Música reproduzida',
+                        iconURL: 'https://cdn.discordapp.com/attachments/1156866389819281418/1157295079874016777/10449-music-note.png?ex=66397c5e&is=6637d35e&hm=bc9c187f2e0de5b5f118cb00eb148d0b2f34ec4b8c0ce0d50455c3d96e299fd3&'
+                    })
+                    .setDescription('**A música está sendo reproduzida!**');
+
+                await channel.send({ embeds: [playEmbed] });
             }
         });
 
