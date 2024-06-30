@@ -144,7 +144,7 @@ function initializePlayer(client) {
                 const pauseEmbed = new MessageEmbed()
                     .setColor("#FFA500")
                     .setTitle("Música pausada")
-                    .setAuthor('Música pausada', 'https://cdn.discordapp.com/attachments/1156866389819281418/1157279084950176774/10173-stop.png')
+                    .setAuthor('Música pausada', 'https://cdn.discordapp.com/attachments/1230824451990622299/1230836684774576168/7762-verified-blue.gif')
                     .setDescription("A música está pausada!");
 
                 await channel.send({ embeds: [pauseEmbed] });
@@ -154,7 +154,7 @@ function initializePlayer(client) {
                 const playEmbed = new MessageEmbed()
                     .setColor("#00FF00")
                     .setTitle("Música reproduzida")
-                    .setAuthor('Música reproduzida', 'https://cdn.discordapp.com/attachments/1156866389819281418/1157295079874016777/10449-music-note.png')
+                    .setAuthor('Música reproduzida', 'https://cdn.discordapp.com/attachments/1230824451990622299/1230836684774576168/7762-verified-blue.gif')
                     .setDescription("A música está sendo reproduzida!");
 
                 await channel.send({ embeds: [playEmbed] });
