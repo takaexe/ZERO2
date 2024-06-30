@@ -12,7 +12,7 @@ module.exports = {
 
       const embed = new EmbedBuilder()
          .setColor('#0099ff')
-      .setTitle('💎 Satoru Music')
+      .setTitle('💎 Comandos!')
       .setDescription('Bem-vindo ao Bot de Música!\n\n- Aqui estão os comandos disponíveis:\n\n' +
         '**/play :** Toque suas musicas pesquisando pelo nome ou link.\n' +
         '**/ping :** Verifique a latência do bot.\n' +
