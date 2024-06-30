@@ -1,230 +1,160 @@
+const { EmbedBuilder } = require('discord.js');
 const { Riffy } = require("riffy");
-const { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, MessageEmbed } = require("discord.js");
-const { queueNames } = require("./commands/play");
-const { createPlayEmbed } = require('./caminho/do/seu/arquivo'); // Substitua pelo caminho correto do seu arquivo
+const { prefix } = require('./config.json');
+const fs = require("fs");
 
-function initializePlayer(client) {
-    const nodes = [
-        {
-            host: "lava-v3.ajieblogs.eu.org",
-            port: 443,
-            password: "https://dsc.gg/ajidevserver",
-            secure: true
-        },
-    ];
+const nodes = [
+    {
+        host: "lavalink.oryzen.xyz",
+        port: 80,
+        password: "oryzen.xyz",
+        secure: false
+    },
+];
 
-    client.riffy = new Riffy(client, nodes, {
-        send: (payload) => {
-            const guildId = payload.d.guild_id;
-            if (!guildId) return;
+const client = new Riffy(client, nodes, {
+    send: (payload) => {
+        const guild = client.guilds.cache.get(payload.d.guild_id);
+        if (guild) guild.shard.send(payload);
+    },
+    defaultSearchPlatform: "ytmsearch",
+    restVersion: "v4"
+});
 
-            const guild = client.guilds.cache.get(guildId);
-            if (guild) guild.shard.send(payload);
-        },
-        defaultSearchPlatform: "ytmsearch",
-        restVersion: "v3"
-    });
+client.on("ready", () => {
+    client.riffy.init(client.user.id);
+});
 
-    client.riffy.on("nodeConnect", node => {
-        console.log(`Node "${node.name}" connected.`);
-    });
+client.on("messageCreate", async (message) => {
+    if (!message.content.startsWith(prefix) || message.author.bot) return;
+    const args = message.content.slice(1).trim().split(" ");
+    const command = args.shift().toLowerCase();
 
-    client.riffy.on("nodeError", (node, error) => {
-        console.error(`Node "${node.name}" encountered an error: ${error.message}.`);
-    });
+    if (command === "play") {
+        const query = args.join(" ");
+        const player = client.riffy.createConnection({
+            guildId: message.guild.id,
+            voiceChannel: message.member.voice.channel.id,
+            textChannel: message.channel.id,
+            deaf: true
+        });
 
-    client.riffy.on("trackStart", async (player, track) => {
-        const channel = client.channels.cache.get(player.textChannel);
+        const resolve = await client.riffy.resolve({ query: query, requester: message.author });
+        const { loadType, tracks, playlistInfo } = resolve;
+
+        if (loadType === 'playlist') {
+            for (const track of resolve.tracks) {
+                track.info.requester = message.author;
+                player.queue.add(track);
+            }
+            const embed = new EmbedBuilder()
+                .setAuthor({
+                    name: 'Added To Queue',
+                    iconURL: 'https://cdn.discordapp.com/attachments/1156866389819281418/1157218651179597884/1213-verified.gif?ex=6517cf5a&is=65167dda&hm=cf7bc8fb4414cb412587ade0af285b77569d2568214d6baab8702ddeb6c38ad5&',
+                    url: 'https://discord.gg/xQF9f9yUEM'
+                })
+                .setDescription(`**Playlist Name : **${playlistInfo.name} \n**Tracks : **${tracks.length}`)
+                .setColor('#14bdff')
+                .setFooter({ text: 'Use queue command for more Information' });
+            message.reply({ embeds: [embed] });
+            if (!player.playing && !player.paused) return player.play();
+
+        } else if (loadType === 'search' || loadType === 'track') {
+            const track = tracks.shift();
+            track.info.requester = message.author;
+            player.queue.add(track);
+
+            const embed = new EmbedBuilder()
+                .setAuthor({
+                    name: 'Added To Queue',
+                    iconURL: 'https://cdn.discordapp.com/attachments/1156866389819281418/1157218651179597884/1213-verified.gif?ex=6517cf5a&is=65167dda&hm=cf7bc8fb4414cb412587ade0af285b77569d2568214d6baab8702ddeb6c38ad5&',
+                    url: 'https://discord.gg/xQF9f9yUEM'
+                })
+                .setDescription(`**${track.info.title} **has been queued up and is ready to play!`)
+                .setColor('#14bdff')
+                .setFooter({ text: 'Use queue command for more Information' });
+            message.reply({ embeds: [embed] });
+
+            if (!player.playing && !player.paused) return player.play();
+        } else {
+            return message.channel.send('There are no results found.');
+        }
+    } else if (command === "loop") {
+        const player = client.riffy.players.get(message.guild.id);
+        if (!player) return message.channel.send("No player available.");
+
+        const loopOption = args[0];
+        if (!loopOption) return message.channel.send("Please provide a loop option: **queue**, **track**, or **none**.");
+
+        if (loopOption === "queue" || loopOption === "track" || loopOption === "none") {
+            player.setLoop(loopOption);
+            message.channel.send(`Loop set to: ${loopOption}`);
+        } else {
+            message.channel.send("Invalid loop option. Please choose `queue`, `track`, or `none`.");
+        }
+    } else if (command === "pause") {
+        const player = client.riffy.players.get(message.guild.id);
+        if (!player) return message.channel.send("No player available.");
+
+        player.pause(true);
+        const embed = new EmbedBuilder()
+            .setAuthor({
+                name: 'Playback Paused!',
+                iconURL: 'https://cdn.discordapp.com/attachments/1175488636033175602/1175488720519049337/pause.png?ex=656b6a2e&is=6558f52e&hm=6695d8141e37330b5426f146ec6705243f497f95f08916a40c1db582c6e07d7e&',
+                url: 'https://discord.gg/xQF9f9yUEM'
+            })
+            .setDescription('**Halt the beats! Music taking a break..**')
+            .setColor('#2b71ec');
+
+        message.reply({ embeds: [embed] });
+    } else if (command === "resume") {
+        const player = client.riffy.players.get(message.guild.id);
+        if (!player) return message.channel.send("No player available.");
+
+        player.pause(false);
 
         const embed = new EmbedBuilder()
-            .setColor("#0099ff")
             .setAuthor({
-                name: 'Está tocando.',
-                iconURL: 'https://cdn.discordapp.com/attachments/1230824451990622299/1236664581364125787/music-play.gif?ex=6638d524&is=663783a4&hm=5179f7d8fcd18edc1f7d0291bea486b1f9ce69f19df8a96303b75505e18baa3a&',
-                url: 'https://instagram.com/taka.exe'
+                name: 'Playback Resumed!',
+                iconURL: 'https://cdn.discordapp.com/attachments/1175488636033175602/1175488720762310757/play.png?ex=656b6a2e&is=6558f52e&hm=ae4f01060fe8ae93f062d6574ef064ca0f6b4cf40b172f1bd54d8d405809c7df&',
+                url: 'https://discord.gg/xQF9f9yUEM'
             })
-            .setDescription(`➡️ **Nome da música:** [${track.info.title}](${track.info.uri})\n➡️ **Autor:** ${track.info.author}\n➡️ **Plataformas :** YouTube, Spotify, SoundCloud`)
-            .setImage(`https://cdn.discordapp.com/attachments/1004341381784944703/1165201249331855380/RainbowLine.gif?ex=663939fa&is=6637e87a&hm=e02431de164b901e07b55d8f8898ca5b1b2832ad11985cecc3aa229a7598d610&`)
-            .setThumbnail(track.info.thumbnail)
-            .setTimestamp()
-            .setFooter({ text: 'Clique nos botões abaixo para controlar a reprodução!' });
+            .setDescription('**Back in action! Let the beats roll..**')
+            .setColor('#2b71ec');
+        message.reply({ embeds: [embed] });
 
-        const queueLoopButton = new ButtonBuilder()
-            .setCustomId("loopQueue")
-            .setLabel("Ligar repetição!🔁")
-            .setStyle(ButtonStyle.Primary);
+    } else if (command === "seek") {
+        const player = client.riffy.players.get(message.guild.id);
+        if (!player) return message.channel.send("No player available.");
 
-        const disableLoopButton = new ButtonBuilder()
-            .setCustomId("disableLoop")
-            .setLabel("Desligar repetição! ")
-            .setStyle(ButtonStyle.Primary);
+        const position = parseInt(args[0]);
+        if (isNaN(position)) return message.channel.send("**Invalid position. Please provide a valid number of milliseconds.**");
 
-        const skipButton = new ButtonBuilder()
-            .setCustomId("skipTrack")
-            .setLabel("Pular ⏭️")
-            .setStyle(ButtonStyle.Success);
+        player.seek(position);
+    } else if (command === "remove") {
+        const player = client.riffy.players.get(message.guild.id);
+        if (!player) return message.channel.send("No player available.");
 
-        const showQueueButton = new ButtonBuilder()
-            .setCustomId("showQueue")
-            .setLabel("Playlist ⏏")
-            .setStyle(ButtonStyle.Primary);
-
-        const clearQueueButton = new ButtonBuilder()
-            .setCustomId("clearQueue")
-            .setLabel("Limpar a playlist 🗑️")
-            .setStyle(ButtonStyle.Danger);
-
-        const playButton = new ButtonBuilder()
-            .setCustomId("playTrack")
-            .setLabel("Reproduzir ▶️")
-            .setStyle(ButtonStyle.Success);
-
-        const actionRow = new ActionRowBuilder()
-            .addComponents(queueLoopButton, disableLoopButton, showQueueButton, clearQueueButton, skipButton, playButton);
-
-        const message = await channel.send({ embeds: [embed], components: [actionRow] });
-
-        const filter = i => i.customId === 'loopQueue' || i.customId === 'skipTrack' || i.customId === 'disableLoop' || i.customId === 'showQueue' || i.customId === 'clearQueue' || i.customId === 'playTrack';
-        const collector = message.createMessageComponentCollector({ filter, time: 180000 });
-
-        setTimeout(() => {
-            const disabledRow = new ActionRowBuilder()
-                .addComponents(
-                    queueLoopButton.setDisabled(true),
-                    disableLoopButton.setDisabled(true),
-                    skipButton.setDisabled(true),
-                    showQueueButton.setDisabled(true),
-                    clearQueueButton.setDisabled(true),
-                    playButton.setDisabled(true)
-                );
-
-            message.edit({ components: [disabledRow] })
-                .catch(console.error);
-        }, 180000);
-
-        collector.on('collect', async i => {
-            await i.deferUpdate();
-            if (i.customId === 'loopQueue') {
-                setLoop(player, 'queue');
-                const loopEmbed = new EmbedBuilder()
-                    .setAuthor({
-                        name: 'Repetição ligada!',
-                        iconURL: 'https://cdn.discordapp.com/attachments/1156866389819281418/1157318080670728283/7905-repeat.gif?ex=66383bb4&is=6636ea34&hm=65f37cf88245f1c09285b547fda57b82828b3bbcda855e184f446d6ff43756b3&',
-                        url: 'https://instagram.com/taka.exe'
-                    })
-                    .setColor("#00FF00")
-                    .setTitle("**A repetição das músicas está ativada!**");
-
-                await channel.send({ embeds: [loopEmbed] });
-            } else if (i.customId === 'skipTrack') {
-                player.stop();
-                const skipEmbed = new EmbedBuilder()
-                    .setColor('#3498db')
-                    .setAuthor({
-                        name: 'Pulando música...',
-                        iconURL: 'https://cdn.discordapp.com/attachments/1156866389819281418/1157269773118357604/giphy.gif?ex=6517fef6&is=6516ad76&hm=f106480f7d017a07f75d543cf545bbea01e9cf53ebd42020bd3b90a14004398e&',
-                        url: 'https://instagram.com/taka.exe'
-                    })
-                    .setTitle("**Vou tocar a próxima música!**")
-                    .setTimestamp();
-
-                await channel.send({ embeds: [skipEmbed] });
-            } else if (i.customId === 'disableLoop') {
-                setLoop(player, 'none');
-                const loopEmbed = new EmbedBuilder()
-                    .setColor("#0099ff")
-                    .setAuthor({
-                        name: 'Repetição desativada.',
-                        iconURL: 'https://cdn.discordapp.com/attachments/1230824451990622299/1230836684774576168/7762-verified-blue.gif?ex=6638b97d&is=663767fd&hm=021725868cbbc66f35d2b980585489f93e9fd366aa57640732dc49e7da9a80ee&',
-                        url: 'https://instagram.com/taka.exe'
-                    })
-                    .setDescription('**A repetição de músicas está desativada!**');
-
-                await channel.send({ embeds: [loopEmbed] });
-            } else if (i.customId === 'showQueue') {
-                const pageSize = 30;
-
-                const queueMessage = queueNames.length > 0 ?
-                    queueNames.map((song, index) => `${index + 1}. ${song}`).join('\n') :
-                    "Playlist está vazia.";
-
-                const pages = [];
-                for (let i = 0; i < queueNames.length; i += pageSize) {
-                    const page = queueNames.slice(i, i + pageSize);
-                    pages.push(page);
-                }
-
-                for (let i = 0; i < pages.length; i++) {
-                    const numberedSongs = pages[i].map((song, index) => `${index + 1}. ${song}`).join('\n');
-
-                    const queueEmbed = new EmbedBuilder()
-                        .setColor("#0099ff")
-                        .setTitle(`Playlist atual (Page ${i + 1}/${pages.length})`)
-                        .setDescription(numberedSongs);
-
-                    await channel.send({ embeds: [queueEmbed] });
-                }
-            } else if (i.customId === 'clearQueue') {
-                clearQueue(player);
-                const queueEmbed = new EmbedBuilder()
-                    .setColor("#0099ff")
-                    .setAuthor({
-                        name: 'Playlist limpa',
-                        iconURL: 'https://cdn.discordapp.com/attachments/1230824451990622299/1230836684774576168/7762-verified-blue.gif?ex=6638b97d&is=663767fd&hm=021725868cbbc66f35d2b980585489f93e9fd366aa57640732dc49e7da9a80ee&',
-                        url: 'https://instagram.com/taka.exe'
-                    })
-                    .setDescription('**Playlist de músicas limpa com sucesso!**');
-
-                await channel.send({ embeds: [queueEmbed] });
-            } else if (i.customId === 'playTrack') {
-                player.pause(false);
-                const playEmbed = createPlayEmbed(track); // 'track' é o objeto que contém informações da música atual
-                await channel.send({ embeds: [playEmbed] });
-            }
-        });
-
-        collector.on('end', collected => {
-            console.log(`Collected ${collected.size} interactions.`);
-        });
-    });
-
-    client.riffy.on("queueEnd", async (player) => {
-        const channel = client.channels.cache.get(player.textChannel);
-        const autoplay = false;
-
-        if (autoplay) {
-            player.autoplay(player);
-        } else {
-            player.destroy();
-            const queueEmbed = new EmbedBuilder()
-                .setColor("#0099ff")
-                .setDescription('**Acabou as músicas! Desconectando o bot...**');
-
-            await channel.send({ embeds: [queueEmbed] });
+        const index = parseInt(args[0]);
+        if (isNaN(index) || index < 1 || index > player.queue.size) {
+            return message.channel.send(`Invalid index. Please provide a valid number between 1 and ${player.queue.size}.`);
         }
-    });
 
-    function setLoop(player, loopType) {
-        if (loopType === "queue") {
-            player.setLoop("queue");
-        } else {
-            player.setLoop("none");
-        }
-    }
+        const removedTrack = player.queue.remove(index - 1);
 
-    function clearQueue(player) {
-        player.queue.clear();
-        queueNames.length = 0;
-    }
+        if (!removedTrack) return message.channel.send("No track found at the specified index.");
+        const embed = new EmbedBuilder()
+            .setColor('#188dcc')
+            .setAuthor({
+                name: 'Removed Sucessfully!',
+                iconURL: 'https://cdn.discordapp.com/attachments/1230824451990622299/1236794583732457473/7828-verify-ak.gif?ex=6641dff7&is=66408e77&hm=e4d3f67ff76adbb3b7ee32fa57a24b7ae4c5acfe9380598e2f7e1a6c8ab6244c&',
+                url: 'https://discord.gg/xQF9f9yUEM'
+            })
+            .setDescription(`**Removed track:** ${removedTrack.info.title}`);
+        message.reply({ embeds: [embed] });
 
-    function showQueue(channel, queue) {
-        const queueList = queue.map((track, index) => `${index + 1}. ${track.info.title}`).join('\n');
-        const queueEmbed = new EmbedBuilder()
-            .setColor("#0099ff")
-            .setTitle("Queue")
-            .setDescription(queueList);
-        channel.send({ embeds: [queueEmbed] });
-    }
-}
+    } else if (command === "queue") {
+        const player = client.riffy.players.get(message.guild.id);
+        if (!player || player.queue.size === 0) return message.channel.send("The queue is currently empty.");
 
-module.exports = { initializePlayer, setLoop, clearQueue, showQueue };
+        const queueList = player.queue.map((track
