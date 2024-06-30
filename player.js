@@ -51,12 +51,12 @@ function initializePlayer(client) {
 
         const queueLoopButton = new ButtonBuilder()
             .setCustomId("loopQueue")
-            .setLabel("Ligar loop!")
+            .setLabel("Ligar repetição!")
             .setStyle(ButtonStyle.Primary);
 
         const disableLoopButton = new ButtonBuilder()
             .setCustomId("disableLoop")
-            .setLabel("Desativar loop.")
+            .setLabel("Desligar repetição")
             .setStyle(ButtonStyle.Primary);
 
         const skipButton = new ButtonBuilder()
