@@ -8,7 +8,9 @@
     "dotenv": "^16.4.5",
     "erela.js": "^2.4.0",
     "express": "^4.19.2",
-    "riffy": "^1.0.3"
+    "riffy": "^1.0.3",
+    "axios": "^0.24.0",
+    "cheerio": "^1.0.0-rc.5"
   },
   "scripts": {
     "start": "node index.js"
