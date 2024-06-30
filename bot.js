@@ -58,7 +58,7 @@ client.on('raw', (packet) => {
 });
 
 // Login do bot
-client.login(config.token).catch((e) => {
+client.login(config.TOKEN).catch((e) => {
     console.log('TOKEN ERROR❌  - Ative intenções ou redefina novo token');
 });
 
