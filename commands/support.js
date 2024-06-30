@@ -1,7 +1,7 @@
 const { EmbedBuilder } = require('discord.js');
 
 module.exports = {
-  name: "support",
+  name: "suporte",
   description: "Obtenha o link do servidor de suporte",
   permissions: "0x0000000000000800",
   options: [],
