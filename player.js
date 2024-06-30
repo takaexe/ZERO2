@@ -1,5 +1,6 @@
 const { Riffy } = require("riffy");
 const { MessageEmbed, MessageActionRow, MessageButton } = require("discord.js");
+const { queueNames } = require("./commands/play");
 
 function initializePlayer(client) {
     const nodes = [
@@ -50,6 +51,14 @@ function initializePlayer(client) {
         const row = new MessageActionRow()
             .addComponents(
                 new MessageButton()
+                    .setCustomId('loopQueue')
+                    .setLabel('Ligar repetição! 🔁')
+                    .setStyle('PRIMARY'),
+                new MessageButton()
+                    .setCustomId('disableLoop')
+                    .setLabel('Desligar repetição!')
+                    .setStyle('PRIMARY'),
+                new MessageButton()
                     .setCustomId('pauseTrack')
                     .setLabel('Pausar ⏸️')
                     .setStyle('PRIMARY'),
@@ -69,7 +78,7 @@ function initializePlayer(client) {
 
         const message = await channel.send({ embeds: [embed], components: [row] });
 
-        const filter = i => ['pauseTrack', 'skipTrack', 'showQueue', 'clearQueue'].includes(i.customId);
+        const filter = i => ['loopQueue', 'disableLoop', 'pauseTrack', 'skipTrack', 'showQueue', 'clearQueue'].includes(i.customId);
         const collector = message.createMessageComponentCollector({ filter, time: 180000 });
 
         setTimeout(() => {
@@ -81,6 +90,10 @@ function initializePlayer(client) {
             await i.deferUpdate();
 
             switch (i.customId) {
+                case 'loopQueue':
+                    setLoop(player, 'queue');
+                    await channel.send({ content: '**A repetição das músicas está ativada!**' });
+                    break;
                 case 'pauseTrack':
                     player.pause(true);
                     await channel.send({ content: '**A música foi pausada!**' });
@@ -89,8 +102,12 @@ function initializePlayer(client) {
                     player.stop();
                     await channel.send({ content: '**Pulando para a próxima música!**' });
                     break;
+                case 'disableLoop':
+                    setLoop(player, 'none');
+                    await channel.send({ content: '**A repetição de músicas está desativada!**' });
+                    break;
                 case 'showQueue':
-                    showQueue(channel, queueNames); // Certifique-se de ter a função showQueue definida
+                    showQueue(channel, queueNames);
                     break;
                 case 'clearQueue':
                     clearQueue(player);
@@ -119,6 +136,10 @@ function initializePlayer(client) {
             await channel.send({ embeds: [embed] });
         }
     });
+
+    function setLoop(player, loopType) {
+        player.setLoop(loopType === 'queue' ? 'queue' : 'none');
+    }
 
     function clearQueue(player) {
         player.queue.clear();
