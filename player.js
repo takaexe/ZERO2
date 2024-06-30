@@ -132,7 +132,15 @@ function initializePlayer(client) {
                 await channel.send({ embeds: [skipEmbed] });
 
             } else if (i.customId === 'showQueue') {
-                showQueue(channel, queueNames);
+                const queueEmbed = new EmbedBuilder()
+                    .setColor("#0099ff")
+                    .setAuthor({
+                        name: 'Lista de reprodução',
+                        iconURL: 'https://cdn.discordapp.com/attachments/1230824451990622299/1230836684774576168/7762-verified-blue.gif'
+                    })
+                    .setDescription(`Lista de Reprodução Atual:\n${queueNames.map((name, index) => `**${index + 1}.** ${name}`).join('\n')}`);
+
+                await channel.send({ embeds: [queueEmbed] });
 
             } else if (i.customId === 'clearQueue') {
                 clearQueue(player);
