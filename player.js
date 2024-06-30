@@ -141,7 +141,7 @@ function initializePlayer(client) {
                     await channel.send({ embeds: [loopEmbed] });
                 } else if (i.customId === 'showQueue') {
     
-                    const pageSize = 10;
+                    const pageSize = 30;
     
                     const queueMessage = queueNames.length > 0 ?
                         queueNames.map((song, index) => `${index + 1}. ${song}`).join('\n') :
