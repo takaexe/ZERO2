@@ -78,6 +78,6 @@ app.listen(port, () => {
 });
 
 // Login do bot
-client.login(config.token).catch((e) => {
+client.login(config.TOKEN || process.env.TOKEN).catch((e) => {
     console.log('TOKEN ERROR❌  - Ative intenções ou redefina novo token');
 });
