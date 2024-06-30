@@ -111,7 +111,7 @@ function initializePlayer(client) {
                         .setColor("#FFA500")
                         .setAuthor({
                             name: 'Música pausada',
-                            iconURL: 'https://cdn.discordapp.com/attachments/1156866389819281418/1157279084950176774/10173-stop.png'
+                            iconURL: 'https://cdn.discordapp.com/attachments/1230824451990622299/1236802049190920202/4104-verify-red.gif'
                         })
                         .setTitle("**A música está pausada!**");
 
