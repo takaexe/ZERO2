@@ -145,7 +145,7 @@ function initializePlayer(client) {
     
                     const queueMessage = queueNames.length > 0 ?
                         queueNames.map((song, index) => `${index + 1}. ${song}`).join('\n') :
-                        "A fila está vazia.";
+                        "Playlist está vazia.";
     
     
                     const pages = [];
@@ -159,7 +159,7 @@ function initializePlayer(client) {
     
                         const queueEmbed = new EmbedBuilder()
                             .setColor("#0099ff")
-                            .setTitle(`Fila atual (Page ${i + 1}/${pages.length})`)
+                            .setTitle(`Playlist atual (Page ${i + 1}/${pages.length})`)
                             .setDescription(numberedSongs);
     
                         await channel.send({ embeds: [queueEmbed] });
@@ -170,11 +170,11 @@ function initializePlayer(client) {
                     const queueEmbed = new EmbedBuilder()
                         .setColor("#0099ff")
                         .setAuthor({
-                            name: 'Fila limpa',
+                            name: 'Playlist limpa',
                             iconURL: 'https://cdn.discordapp.com/attachments/1230824451990622299/1230836684774576168/7762-verified-blue.gif?ex=6638b97d&is=663767fd&hm=021725868cbbc66f35d2b980585489f93e9fd366aa57640732dc49e7da9a80ee&',
                             url: 'https://instagram.com/taka.exe'
                         })
-                        .setDescription('**Fila de músicas limpa com sucesso!**');
+                        .setDescription('**Playlist de músicas limpa com sucesso!**');
     
     
                     await channel.send({ embeds: [queueEmbed] });
