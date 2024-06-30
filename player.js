@@ -59,6 +59,14 @@ function initializePlayer(client) {
                     .setLabel('Desligar repetição!')
                     .setStyle('PRIMARY'),
                 new MessageButton()
+                    .setCustomId('pauseTrack')
+                    .setLabel('Pausar ⏸️')
+                    .setStyle('PRIMARY'),
+                new MessageButton()
+                    .setCustomId('playTrack')
+                    .setLabel('Reproduzir ▶️')
+                    .setStyle('PRIMARY'),
+                new MessageButton()
                     .setCustomId('skipTrack')
                     .setLabel('Pular ⏭️')
                     .setStyle('SUCCESS'),
@@ -74,7 +82,7 @@ function initializePlayer(client) {
 
         const message = await channel.send({ embeds: [embed], components: [row] });
 
-        const filter = i => ['loopQueue', 'disableLoop', 'skipTrack', 'showQueue', 'clearQueue'].includes(i.customId);
+        const filter = i => ['loopQueue', 'disableLoop', 'pauseTrack', 'playTrack', 'skipTrack', 'showQueue', 'clearQueue'].includes(i.customId);
         const collector = message.createMessageComponentCollector({ filter, time: 180000 });
 
         setTimeout(() => {
@@ -89,6 +97,14 @@ function initializePlayer(client) {
                 case 'loopQueue':
                     setLoop(player, 'queue');
                     await channel.send({ content: '**A repetição das músicas está ativada!**', embeds: [loopEmbed] });
+                    break;
+                case 'pauseTrack':
+                    player.pause(true);
+                    await channel.send({ content: '**A música foi pausada!**', embeds: [pauseEmbed] });
+                    break;
+                case 'playTrack':
+                    player.pause(false); // Resume playing
+                    await channel.send({ content: '**A música foi reproduzida!**', embeds: [playEmbed] });
                     break;
                 case 'skipTrack':
                     player.stop();
