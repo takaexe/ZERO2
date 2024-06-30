@@ -7,7 +7,7 @@ const { MessageEmbed } = require('discord.js');
 async function fetchKD(playerName) {
     try {
         // URL da página do Tracker.gg (substitua com a URL correta para o seu jogo)
-        const url = `https://tracker.gg/valorant/profile/${playerName}/overview`;
+        const url = `https://tracker.gg/valorant/profile/${encodeURIComponent(playerName)}/overview`;
 
         // Faz a requisição HTTP para obter o HTML da página
         const response = await axios.get(url);
