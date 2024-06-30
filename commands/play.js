@@ -64,29 +64,29 @@ async function play(client, interaction) {
             new EmbedBuilder()
                 .setColor('#4d9fd6')
                 .setAuthor({
-                    name: 'Solicitação completa!',
+                    name: 'Música adicionada!',
                     iconURL: 'https://cdn.discordapp.com/attachments/1230824451990622299/1236794583732457473/7828-verify-ak.gif',
                     url: 'https://instagram.com/taka.exe'
                 })
-                .setDescription('➡️ **Sua solicitação foi processada com sucesso.**\n➡️** Use os botões para controlar a fila**'),
+                .setDescription('➡️ **Sua música foi adicionada com sucesso.**\n➡️** Use os botões para controlar a fila**'),
 
             new EmbedBuilder()
                 .setColor('#ffea00')
                 .setAuthor({
-                    name: 'Solicitação completa!',
+                    name: 'Música adicionada!',
                     iconURL: 'https://cdn.discordapp.com/attachments/1230824451990622299/1236802032938127470/4104-verify-yellow.gif',
                     url: 'https://instagram.com/taka.exe'
                 })
-                .setDescription('➡️ **Sua solicitação foi processada com sucesso.**\n➡️** Use os botões para controlar a fila**'),
+                .setDescription('➡️ **Sua música foi adicionada com sucesso.**\n➡️** Use os botões para controlar a fila**'),
 
             new EmbedBuilder()
                 .setColor('#FF0000')
                 .setAuthor({
-                    name: 'Solicitação completa!!',
+                    name: 'Música adicionada!',
                     iconURL: 'https://cdn.discordapp.com/attachments/1230824451990622299/1236802049190920202/4104-verify-red.gif',
                     url: 'https://instagram.com/taka.exe'
                 })
-                .setDescription('➡️ **Sua solicitação foi processada com sucesso.**\n➡️** Use os botões para controlar a fila**')
+                .setDescription('➡️ **Sua música foi adicionada com sucesso.**\n➡️** Use os botões para controlar a fila**')
         ];
 
         const randomIndex = Math.floor(Math.random() * embeds.length);
