@@ -1,7 +1,7 @@
 const { EmbedBuilder } = require('discord.js')
 
 module.exports = {
-  name: "ping",
+  name: "ping2",
   description: "verifique a latência do bot",
   permissions: "0x0000000000000800",
   options: [],
